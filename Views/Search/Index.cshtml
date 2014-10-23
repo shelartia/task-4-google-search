@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>SearchIndex</h2>
+
+<p>
+    @using (Html.BeginForm("Index","Search",FormMethod.Get)){    
+          <p>Search: @Html.TextBox("searchString") 
+              <input type="submit" value="Go" />
+          </p>
+        }
+</p>
+<div> @ViewBag.totalPages</div>
+
+<div>@ViewBag.searchText</div>
+<div>@ViewBag.foundResultsCount</div>
+
+<div>@ViewBag.searchTime</div>
+
+
+<div>Results:</div>
+@foreach (var search in ViewBag.infosearch) {
+    <div>
+        <a href="@search">
+         @search </a>
+       
+        
+    </div>
+} 
