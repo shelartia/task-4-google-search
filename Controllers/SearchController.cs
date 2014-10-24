@@ -7,6 +7,7 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using SearchPage.Models.Helpers;
+using SearchPage.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,18 +26,18 @@ namespace SearchPage.Controllers
         
         private List<string> infosearch;
         private MySearcher ms;
+
         public SearchController()
         {
-
-            ms = new MySearcher("http://fs.to");
-            ms.AddDocuments();
             infosearch = new List<string>();
+            
         }
         //
         // GET: /Search/
 
         public ActionResult Index(string searchString="")
         {
+            ms = new MySearcher(Settings.Default.SiteToSearch);
             
             if (String.IsNullOrEmpty(searchString))
             {
@@ -56,7 +57,16 @@ namespace SearchPage.Controllers
                 ViewBag.foundResultsCount = infosearch[1];
                 ViewBag.infosearch = infosearch.GetRange(2,infosearch.Count-2);
             }
+            
+            return View();
+        }
+
+        public ActionResult SearchServiceInfo()
+        {
+            ms = new MySearcher(Settings.Default.SiteToSearch);
+            //ViewBag.allLinks = MySearcher.listAllLinks;
             ViewBag.totalPages = "Total indexed pages count: " + ms.GetIndexedPagesCount().ToString();
+
             return View();
         }
 

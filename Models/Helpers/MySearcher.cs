@@ -5,6 +5,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using SearchPage.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,11 @@ namespace SearchPage.Models.Helpers
         
        
         private string baseUrl;
-        private int indexedPagesCount;
+        private static int indexedPagesCount=0;
+        //public static List<string> listAllLinks;
         public MySearcher(string _Url)
         {
             baseUrl = _Url;
-            indexedPagesCount = 0;
-
         }
 
         public int GetIndexedPagesCount()
@@ -30,7 +30,7 @@ namespace SearchPage.Models.Helpers
             return indexedPagesCount;
         }
 
-        public void AddDocuments(int countLevels=10)
+        public void ScrapPagesFromSite(int countPages=100)
         {
             
             string url=baseUrl;
@@ -45,7 +45,7 @@ namespace SearchPage.Models.Helpers
 
             page.Add(new Field("Content", text, Field.Store.YES, Field.Index.ANALYZED));
 
-            Lucene.Net.Store.Directory directory = FSDirectory.Open("E:\\TasksFromZhorik\\Task4\\SearchPage\\SearchPage\\LuceneIndex");
+            Lucene.Net.Store.Directory directory = FSDirectory.Open(Settings.Default.IndexDirectory);
 
             Analyzer analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
 
@@ -54,7 +54,7 @@ namespace SearchPage.Models.Helpers
             var writer = new IndexWriter(directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 
             writer.AddDocument(page);
-            indexedPagesCount++;
+            
 
             page.RemoveField("Link");
             page.RemoveField("Content");
@@ -66,14 +66,15 @@ namespace SearchPage.Models.Helpers
 
             was_searched_links = home_links;
             current_level_links = home_links;
-            int level_count = countLevels;
-            for (int i = 0; i < level_count - 1; i++)
+
+
+            while(countPages > 0)
             {
                 for (int j = 0; j < current_level_links.Count - 1; j++)
                 {
                     page_links = site.GetLinksFromPage(current_level_links[j], baseUrl);
 
-                    next_level_links.AddRange(page_links.Except(was_searched_links));
+                    next_level_links.AddRange(page_links.Except(was_searched_links).ToList());
                     page_links.Clear();
 
                     text = site.GetTextFromPage(current_level_links[j]);
@@ -83,18 +84,21 @@ namespace SearchPage.Models.Helpers
                     page.Add(new Field("Content", text, Field.Store.YES, Field.Index.ANALYZED));
 
                     writer.AddDocument(page);
-                    indexedPagesCount++;
+                    if ((countPages--) <= 0) break;
 
                     page.RemoveField("Link");
                     page.RemoveField("Content");
                 }
 
-                was_searched_links.AddRange(next_level_links);
-                current_level_links = next_level_links;
+                was_searched_links.AddRange(next_level_links.ToList());
+                current_level_links = next_level_links.ToList();
                 next_level_links.Clear();
 
             }
-
+            //
+            //listAllLinks = was_searched_links;
+            indexedPagesCount = writer.NumDocs();
+            //
             writer.Optimize();
 
             writer.Dispose();
@@ -104,7 +108,7 @@ namespace SearchPage.Models.Helpers
 
         public List<string> Search(string searchword)
         {
-            Lucene.Net.Store.Directory directory = FSDirectory.Open("E:\\TasksFromZhorik\\Task4\\SearchPage\\SearchPage\\LuceneIndex");
+            Lucene.Net.Store.Directory directory = FSDirectory.Open(Settings.Default.IndexDirectory);
 
             Analyzer analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
 

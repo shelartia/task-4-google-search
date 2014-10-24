@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace SearchPage.Models.Helpers
@@ -50,11 +51,17 @@ namespace SearchPage.Models.Helpers
 
             List<Uri> Uris = new List<Uri>();
 
+            
+  
             foreach (var link in linksOnPage)
             {
                 Uri baseUri = new Uri(urlBase, UriKind.Absolute);
                 Uri page = new Uri(baseUri, link.Url.ToString());
-                Uris.Add(page);
+                Match match = Regex.Match(page.ToString(), @"\.(jpg|gif|jpeg|pdf|rar)$", RegexOptions.IgnoreCase);
+                if (!match.Success)
+                {
+                    Uris.Add(page);
+                }
             }
             List<string> links = new List<string>();
             foreach (var uri in Uris)

@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SearchPage.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="IndexDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">d:\Books\Projects\TasksFromZhorik\Task4\SearchPage\SearchPage\LuceneIndex</Value>
+    </Setting>
+    <Setting Name="SiteToSearch" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://fs.to</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

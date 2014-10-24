@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SearchPage.Models.Helpers;
+using SearchPage.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -23,6 +25,10 @@ namespace SearchPage
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+
+            //Add page from site to index
+            MySearcher ms = new MySearcher(Settings.Default.SiteToSearch);
+            ms.ScrapPagesFromSite(200);
         }
     }
 }

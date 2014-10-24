@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SearchPage.Models.Helpers;
+using SearchPage.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -28,5 +30,7 @@ namespace SearchPage.Controllers
 
             return View();
         }
+
+        
     }
 }
